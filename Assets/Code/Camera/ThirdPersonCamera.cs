@@ -18,8 +18,8 @@ public class ThirdPersonCamera : MonoBehaviour
 
     // Private
     private SphericalPosition cameraPosition;
-    float zoomMaxSpeed = 5.0f;
-    float zoomMaxAccel = 1.0f;
+    float zoomMaxSpeed = 1.0f;
+    float zoomMaxAccel = 0.5f;
 
     #endregion
 
@@ -43,6 +43,8 @@ public class ThirdPersonCamera : MonoBehaviour
 
         updateSphericalPosition(dt, cameraInputs);
 
+        transform.rotation = updateCameraRotation();
+
         transform.LookAt(target.transform.position + focusedPoint);
 
         transform.position = target.transform.position + cameraPosition.toCarthesian();
@@ -51,12 +53,25 @@ public class ThirdPersonCamera : MonoBehaviour
 
     #region Methods
 
+    Quaternion updateCameraRotation()
+    {
+        Quaternion ret = new Quaternion();
+
+        ret = Quaternion.LookRotation(-transform.position, Vector3.up);
+
+        return ret;
+    }
+
     void updateSphericalPosition(float delta, Vector2 inputs)
     {
         float horAngleOffset = delta * inputs.x;
         float verAngleOffset = delta * inputs.y;
         cameraPosition.Theta += verAngleOffset;
         cameraPosition.Phi += horAngleOffset;
+
+        Mathf.Clamp(cameraPosition.Theta, 30.0f, 330.0f);
+        Mathf.Clamp(cameraPosition.Phi, 30.0f, 330.0f);
+
         //cameraPosition.Distance = distToTarget;
     }
 
