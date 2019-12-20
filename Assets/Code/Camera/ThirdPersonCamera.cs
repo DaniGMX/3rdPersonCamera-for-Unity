@@ -18,7 +18,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     // Private
     private SphericalPosition cameraPosition;
-    float zoomMaxSpeed = 1.0f;
+    float zoomMaxSpeed = 2.0f;
     float zoomMaxAccel = 0.5f;
 
     #endregion
@@ -68,23 +68,27 @@ public class ThirdPersonCamera : MonoBehaviour
         float verAngleOffset = delta * inputs.y;
         cameraPosition.Theta += verAngleOffset;
         cameraPosition.Phi += horAngleOffset;
-
-        Mathf.Clamp(cameraPosition.Theta, 30.0f, 330.0f);
-        Mathf.Clamp(cameraPosition.Phi, 30.0f, 330.0f);
-
-        //cameraPosition.Distance = distToTarget;
     }
 
     void updateDistanceToTarget(float delta)
     {
+        Camera thisCamera = GetComponent<Camera>();
+
+        float fovIncrement = 0.25f;
+
         if (Input.GetKey(KeyCode.Z))
         {
-            cameraPosition.Distance -= zoomMaxSpeed * delta + zoomMaxAccel * delta * delta;
+            cameraPosition.Distance -= zoomMaxSpeed * delta;
+
+            thisCamera.fieldOfView += fovIncrement;
         }
         else if (Input.GetKey(KeyCode.X))
         {
-            cameraPosition.Distance += zoomMaxSpeed * delta + zoomMaxAccel * delta * delta;
+            cameraPosition.Distance += zoomMaxSpeed * delta;
+
+            thisCamera.fieldOfView -= fovIncrement;
         }
     }
+
     #endregion
 }
